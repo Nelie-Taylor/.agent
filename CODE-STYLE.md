@@ -26,6 +26,19 @@ const obj = { key1: 'value1', key2: 'value2', key3: 'value3' }
 >
 ```
 
+## Never use destructuring assignment
+
+```ts
+// Good
+const param = c.get('param') as IParamId;
+const body = await c.req.json<{ name: string }>();
+console.log(param.id, body.name);
+
+// Bad — do not destructure
+const { id } = c.get('param') as IParamId;
+const { name } = await c.req.json<{ name: string }>();
+```
+
 ## If statements: Always use braces
 
 ```ts
