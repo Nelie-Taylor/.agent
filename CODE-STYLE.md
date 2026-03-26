@@ -39,6 +39,20 @@ const { id } = c.get('param') as IParamId;
 const { name } = await c.req.json<{ name: string }>();
 ```
 
+## Controller params/body: Always use interfaces from request middleware
+
+```ts
+// Good — import and use the interface from @request/
+import { IUpdateParams, IUpdateBody } from "@request/web/system/connect";
+
+const params: IUpdateParams = c.get('params');
+const body: IUpdateBody = c.get('body');
+
+// Bad — do not inline types
+const params: { id: string } = c.get('params');
+const body: { name: string } = c.get('body');
+```
+
 ## If statements: Always use braces
 
 ```ts
