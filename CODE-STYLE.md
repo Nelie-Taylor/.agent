@@ -53,6 +53,19 @@ const params: { id: string } = c.get('params');
 const body: { name: string } = c.get('body');
 ```
 
+## Never extract object properties into intermediate variables
+
+```ts
+// Good — use property access inline
+eq(Model.id, params.id)
+StorageHDG.Upload(mediaPath(user.id, params.id), ...)
+
+// Bad — do not extract into a new variable
+const vehicleId = params.id;
+eq(Model.id, vehicleId)
+StorageHDG.Upload(mediaPath(user.id, vehicleId), ...)
+```
+
 ## If statements: Always use braces
 
 ```ts
