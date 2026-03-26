@@ -53,6 +53,18 @@ const params: { id: string } = c.get('params');
 const body: { name: string } = c.get('body');
 ```
 
+## Never break function arguments onto multiple lines
+
+```ts
+// Good
+StorageHDG.DeleteMany(media.map((m) => `${mediaPath(user.id, params.id)}/${m.fileName}`)).catch(console.error);
+
+// Bad — do not wrap arguments across lines
+StorageHDG.DeleteMany(
+  media.map((m) => `${mediaPath(user.id, params.id)}/${m.fileName}`)
+).catch(console.error);
+```
+
 ## Never extract object properties into intermediate variables
 
 ```ts
