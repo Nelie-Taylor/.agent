@@ -39,6 +39,21 @@ const { id } = c.get('param') as IParamId;
 const { name } = await c.req.json<{ name: string }>();
 ```
 
+## Never break import specifiers onto multiple lines
+
+```ts
+// Good
+import type { ICreateBody, ISearchTenantQuery, IUploadTenantImageParams, IUploadVehicleMediaParams } from '@request/mobile/owner/contract';
+
+// Bad — do not wrap import items onto multiple lines
+import type {
+  ICreateBody,
+  ISearchTenantQuery,
+  IUploadTenantImageParams,
+  IUploadVehicleMediaParams
+} from '@request/mobile/owner/contract';
+```
+
 ## Controller params/body: Always use interfaces from request middleware
 
 ```ts
