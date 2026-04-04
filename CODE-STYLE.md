@@ -104,3 +104,28 @@ if (condition) {
 // Bad — do not omit braces
 if (condition) return value;
 ```
+
+## Never break short if statements onto multiple lines
+
+```ts
+// Good
+if (condition) { return value; }
+
+// Bad — do not wrap short if across lines
+if (condition) {
+  return value;
+}
+```
+
+## Never break short ternary expressions onto multiple lines
+
+```ts
+// Good
+const vehicleMedia = vehicles.length > 0 ? await DBCore.select()
+  .from(Account.AccountTenantVehicleMediaModel) : [];
+
+// Bad — do not wrap short ternary across lines
+const vehicleMedia = vehicles.length > 0
+  ? await DBCore.select().from(Account.AccountTenantVehicleMediaModel)
+  : [];
+```
