@@ -232,3 +232,19 @@ const vehicleMedia = vehicles.length > 0
   ? await DBCore.select().from(Account.AccountTenantVehicleMediaModel)
   : [];
 ```
+
+## File names: Always use lowercase with hyphens
+
+All file names must be lowercase and use hyphens to separate words.
+
+```bash
+# Good
+notification-service.ts
+user-profile-card.tsx
+home-screen.dart
+
+# Bad — do not use camelCase, PascalCase, or underscores
+NotificationService.ts
+user_profile_card.tsx
+HomeScreen.dart
+```
