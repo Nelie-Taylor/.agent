@@ -2,6 +2,10 @@
 
 ## Objects: Always put properties on separate lines
 
+Applies to TypeScript/JavaScript and Dart/Flutter source.
+
+This applies everywhere: top-level declarations, inline payloads, object/map literals inside functions, callbacks, widget trees, and helper returns.
+
 ```ts
 // Good
 const obj = {
@@ -12,6 +16,32 @@ const obj = {
 
 // Bad — do not inline properties
 const obj = { key1: 'value1', key2: 'value2', key3: 'value3' }
+```
+
+```dart
+// Good
+final payload = {
+  'name': name,
+  'phone': phone,
+  'email': email
+};
+
+void submit() {
+  api.post(
+    '/profile',
+    data: {
+      'name': name,
+      'phone': phone
+    },
+  );
+}
+
+// Bad — do not inline properties
+final payload = {'name': name, 'phone': phone, 'email': email};
+
+void submit() {
+  api.post('/profile', data: {'name': name, 'phone': phone});
+}
 ```
 
 ## JSX: Keep all attributes on a single line
@@ -54,6 +84,48 @@ import type {
 } from '@request/mobile/owner/contract';
 ```
 
+## Always use single quotes
+
+```ts
+// Good
+import { IUpdateParams, IUpdateBody } from '@request/web/system/connect';
+const mess = 'error from server';
+
+// Bad — do not use double quotes when single quotes are possible
+import { IUpdateParams, IUpdateBody } from "@request/web/system/connect";
+const mess = "error from server";
+```
+
+## Never use trailing commas in objects or arrays
+
+Applies to TypeScript/JavaScript source.
+
+Exception: Do not enforce this rule for Dart/Flutter code because `dart format` may add trailing commas automatically for multiline layouts.
+
+```ts
+// Good
+const obj = {
+  key1: 'value1',
+  key2: 'value2'
+}
+
+const arr = [
+  'a',
+  'b'
+]
+
+// Bad — do not leave a trailing comma on the last item
+const obj = {
+  key1: 'value1',
+  key2: 'value2',
+}
+
+const arr = [
+  'a',
+  'b',
+]
+```
+
 ## Controller params/body: Always use interfaces from request middleware
 
 ```ts
@@ -80,7 +152,26 @@ StorageHDG.DeleteMany(
 ).catch(console.error);
 ```
 
+## Only break chained calls from the second dot onward
+
+Keep the first method call on the same line as the base expression. If a chain must wrap, only the second `.` and onward may start on new lines.
+
+```ts
+// Good
+await DBCore.select()
+  .from(Account.AccountOAuth)
+  .where(eq(Account.AccountOAuth.userId, userId));
+
+// Bad — do not break before the first chained call
+await DBCore
+  .select()
+  .from(Account.AccountOAuth)
+  .where(eq(Account.AccountOAuth.userId, userId));
+```
+
 ## Never extract object properties into intermediate variables
+
+Applies to TypeScript/JavaScript and Dart/Flutter source.
 
 ```ts
 // Good — use property access inline
@@ -91,6 +182,18 @@ StorageHDG.Upload(mediaPath(user.id, params.id), ...)
 const vehicleId = params.id;
 eq(Model.id, vehicleId)
 StorageHDG.Upload(mediaPath(user.id, vehicleId), ...)
+```
+
+```dart
+// Good — use property access inline
+Text(user.fullName)
+service.updateProfile(user.id, form.name)
+
+// Bad — do not extract into a new variable when it is only used immediately
+final fullName = user.fullName;
+final userId = user.id;
+Text(fullName)
+service.updateProfile(userId, form.name)
 ```
 
 ## If statements: Always use braces
