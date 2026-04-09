@@ -4,18 +4,30 @@
 
 Applies to TypeScript/JavaScript and Dart/Flutter source.
 
-This applies everywhere: top-level declarations, inline payloads, object/map literals inside functions, callbacks, widget trees, and helper returns.
+This applies everywhere: top-level declarations, inline payloads, object/map literals inside functions, callbacks, widget trees, helper returns, and nested object literals passed as arguments.
 
 ```ts
 // Good
 const obj = {
   key1: 'value1',
   key2: 'value2',
-  key3: 'value3',
+  key3: 'value3'
 }
+
+timestamp('created_at', {
+  withTimezone: true
+})
+
+varchar('client_secret', {
+  length: 255
+})
 
 // Bad — do not inline properties
 const obj = { key1: 'value1', key2: 'value2', key3: 'value3' }
+
+timestamp('created_at', { withTimezone: true })
+
+varchar('client_secret', { length: 255 })
 ```
 
 ```dart
