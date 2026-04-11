@@ -148,10 +148,32 @@ StorageHDG.DeleteMany(
 
 ## Only break chained calls from the second dot onward
 
-Keep the first method call on the same line as the base expression. If a chain must wrap, only the second `.` and onward may start on new lines.
+The first `.method()` stays on the same line as the base expression. The second `.` and every subsequent `.` must start on a new line, indented once from the base.
+
+A chain with only one `.` needs no break. A chain with two or more `.` calls keeps the first on the same line and wraps the rest.
 
 ```ts
-// Good
+// Good — 1 dot, no break needed
+varchar('password').notNull(),
+
+// Good — 2 dots: first stays, second wraps
+uuid('id').primaryKey()
+  .defaultRandom(),
+
+varchar('username').notNull()
+  .unique(),
+
+// Good — 2 dots after multiline arg: first dot on closing line, second wraps
+timestamp('created_at', {
+  withTimezone: true
+}).notNull()
+  .defaultNow(),
+
+// Good — 3 dots: first stays, second and third wrap
+jsonb('to').$type<string[]>().notNull()
+  .default([]),
+
+// Good — query chain
 await DBCore.select()
   .from(Account.AccountOAuth)
   .where(eq(Account.AccountOAuth.userId, userId));
@@ -161,6 +183,9 @@ await DBCore
   .select()
   .from(Account.AccountOAuth)
   .where(eq(Account.AccountOAuth.userId, userId));
+
+// Bad — second dot not wrapped
+uuid('id').primaryKey().defaultRandom(),
 ```
 
 ## Never extract object properties into intermediate variables
