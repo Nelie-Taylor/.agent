@@ -50,18 +50,6 @@ void submit() {
 }
 ```
 
-## JSX: Keep all attributes on a single line
-
-```tsx
-// Good
-<div className='flex h-screen w-full items-center justify-center overflow-hidden bg-content1 p-2 sm:p-4 lg:p-8'>
-
-// Bad — do not break attributes onto multiple lines
-<div
-  className='flex h-screen w-full items-center justify-center overflow-hidden bg-content1 p-2 sm:p-4 lg:p-8'
->
-```
-
 ## Never use destructuring assignment
 
 ```ts
@@ -250,6 +238,73 @@ const vehicleMedia = vehicles.length > 0 ? await DBCore.select()
 const vehicleMedia = vehicles.length > 0
   ? await DBCore.select().from(Account.AccountTenantVehicleMediaModel)
   : [];
+```
+
+## Arrays: Always put items on separate lines
+
+Each item in `[]` must be on its own line — primitives, expressions, and objects alike.
+
+```ts
+// Good
+const ids = [
+  'abc',
+  'def',
+  'ghi'
+]
+
+const names = [
+  getFirst(),
+  getSecond()
+]
+
+// Bad — do not inline items
+const ids = ['abc', 'def', 'ghi']
+const names = [getFirst(), getSecond()]
+```
+
+## Array of objects: close `}, {` on the same line
+
+When an array contains object literals, each object's opening `{` stays on the line with `[` or `}, {`, and the final `}]` closes together.
+
+```ts
+// Good
+const users = [{
+  name: 'Alice',
+  age: 30
+}, {
+  name: 'Bob',
+  age: 25
+}]
+
+await db.insert(TokenModel).values([{
+  userId: user.id,
+  token: code
+}, {
+  userId: user.id,
+  token: backup
+}])
+
+// Bad — do not put `{` or `}` on their own line inside an array
+const users = [
+  {
+    name: 'Alice',
+    age: 30
+  },
+  {
+    name: 'Bob',
+    age: 25
+  }
+]
+
+// Bad — do not separate `}` and `]` onto two lines
+const users = [{
+  name: 'Alice',
+  age: 30
+}, {
+  name: 'Bob',
+  age: 25
+}
+]
 ```
 
 ## File names: Always use lowercase with hyphens
