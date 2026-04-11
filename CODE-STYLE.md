@@ -185,6 +185,8 @@ await DBCore
 
 Applies to TypeScript/JavaScript and Dart/Flutter source.
 
+This also includes assigning object members to new variables before use. Do not write `const ConnectCodeModel = ID.Connect.ConnectCodeModel;` or similar. Use `ID.Connect.ConnectCodeModel` inline.
+
 ```ts
 // Good — use property access inline
 eq(Model.id, params.id)
@@ -208,6 +210,29 @@ Text(fullName)
 service.updateProfile(userId, form.name)
 ```
 
+## Extract function calls used more than once into a variable
+
+When a function call (not a simple property access) is used more than once, store its result in a variable. This avoids duplicate calls and improves readability.
+
+This rule is about **function/method calls** like `c.req.header('app')`, `Date.now()`, `arr.filter(...)`. It does NOT apply to simple property access like `user.id` or `params.name` — those follow the "Never extract object properties" rule above.
+
+```ts
+// Good — function called twice, extract to variable
+const app = c.req.header('app');
+if (app && app !== '') {
+  const [connect] = await DBCore.select()
+    .from(ConnectModel)
+    .where(eq(ConnectModel.secret, app));
+}
+
+// Bad — same function call repeated inline
+if (c.req.header('app') && c.req.header('app') !== '') {
+  const [connect] = await DBCore.select()
+    .from(ConnectModel)
+    .where(eq(ConnectModel.secret, c.req.header('app')));
+}
+```
+
 ## If statements: Always use braces
 
 ```ts
@@ -218,18 +243,6 @@ if (condition) {
 
 // Bad — do not omit braces
 if (condition) return value;
-```
-
-## Never break short if statements onto multiple lines
-
-```ts
-// Good
-if (condition) { return value; }
-
-// Bad — do not wrap short if across lines
-if (condition) {
-  return value;
-}
 ```
 
 ## Never break short ternary expressions onto multiple lines
