@@ -18,16 +18,10 @@ timestamp('created_at', {
   withTimezone: true
 })
 
-varchar('client_secret', {
-  length: 255
-})
-
 // Bad — do not inline properties
 const obj = { key1: 'value1', key2: 'value2', key3: 'value3' }
 
 timestamp('created_at', { withTimezone: true })
-
-varchar('client_secret', { length: 255 })
 ```
 
 ```dart
