@@ -308,3 +308,42 @@ import { UserModel } from '../../model/user';
 - Context keys: `camelCase` strings — `'user'`, `'userToken'`, `'body'`, `'params'`, `'query'`, `'span'`
 - File names: `kebab-case` — `forgot-password.ts`, `upload-avatar.ts` (follows CODE-STYLE.md)
 - Interfaces for request bodies/params/queries: `I` prefix + `PascalCase` — `ICreateBody`, `IUpdateParams`, `ISendCodeBody`
+
+## JSONB columns: Always cast with `sql\`::jsonb\``
+
+Drizzle ORM does not automatically serialize JavaScript objects/arrays to JSONB when inserting or updating. The value is sent as a plain string, which causes PostgreSQL to reject it or store it incorrectly.
+
+Always wrap JSONB values with `` sql`${JSON.stringify(value)}::jsonb` `` from `drizzle-orm`.
+
+```ts
+import { sql } from 'drizzle-orm';
+
+// Good — cast to jsonb explicitly
+await DBCore.insert(UserModel).values({
+  username: 'john',
+  setting: sql`${JSON.stringify({ terms: [{ id: '1', acceptedAt: new Date() }] })}::jsonb`
+});
+
+await DBCore.update(LogEmailModel).set({
+  status: 'SUCCESS',
+  response: sql`${JSON.stringify(response)}::jsonb`
+});
+
+await DBCore.insert(OAuthClientModel).values({
+  clientId: 'app',
+  grantTypes: sql`${JSON.stringify(['authorization_code', 'refresh_token'])}::jsonb`,
+  scopes: sql`${JSON.stringify(['openid', 'profile'])}::jsonb`
+});
+
+// Bad — plain object/array without cast (stored as string, not jsonb)
+await DBCore.insert(UserModel).values({
+  username: 'john',
+  setting: { terms: [{ id: '1', acceptedAt: new Date() }] }
+});
+
+await DBCore.insert(OAuthClientModel).values({
+  clientId: 'app',
+  grantTypes: ['authorization_code', 'refresh_token'],
+  scopes: ['openid', 'profile']
+});
+```
