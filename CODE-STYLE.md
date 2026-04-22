@@ -120,6 +120,44 @@ const arr = [
 ]
 ```
 
+## Always use semicolons in TypeScript type members and declarations
+
+Applies to TypeScript-only syntax such as `interface`, `type`, and class field declarations.
+
+Use `;` to terminate each interface property, type member, and class field. Do not remove semicolons from these declarations.
+
+```ts
+// Good
+interface IUser {
+  id: string;
+  username: string;
+}
+
+type IPoint = {
+  x: number;
+  y: number;
+};
+
+class Service {
+  private readonly name: string;
+}
+
+// Bad — do not omit semicolons in TS declarations
+interface IUser {
+  id: string
+  username: string
+}
+
+type IPoint = {
+  x: number
+  y: number
+}
+
+class Service {
+  private readonly name: string
+}
+```
+
 ## Controller params/body: Always use interfaces from request middleware
 
 ```ts
