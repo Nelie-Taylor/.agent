@@ -271,6 +271,30 @@ await Promise.all([
 ]);
 ```
 
+## Drizzle conditions: Always break `and(` items onto separate lines
+
+When using `and(` in Drizzle conditions, always put each condition item on its own line.
+
+This is a back-end exception to the general `CODE-STYLE.md` rule about not breaking function-call arguments across multiple lines.
+
+```ts
+// Good
+await DBCore.select()
+  .from(UserEmailModel)
+  .where(
+    and(
+      eq(UserEmailModel.id, params.id),
+      eq(UserEmailModel.userId, user.id),
+      isNull(UserEmailModel.deletedAt)
+    )
+  );
+
+// Bad
+await DBCore.select()
+  .from(UserEmailModel)
+  .where(and(eq(UserEmailModel.id, params.id), eq(UserEmailModel.userId, user.id), isNull(UserEmailModel.deletedAt)));
+```
+
 ## Route composition: Request → Security → Controller order
 
 Routes are composed as positional middleware arguments. Always follow the order: request validation, then security middleware (Turnstile / Auth / Password), then controller.
