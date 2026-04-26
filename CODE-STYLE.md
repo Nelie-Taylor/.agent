@@ -172,13 +172,27 @@ const params: { id: string } = c.get('params');
 const body: { name: string } = c.get('body');
 ```
 
-## Never break function arguments onto multiple lines
+## Never break variable/function-call arguments onto multiple lines
+
+Do not break a variable, expression, or function-call argument across multiple lines.
+
+Exception: object literals and array literals passed as arguments may span multiple lines, but must follow the object and array formatting rules.
 
 ```ts
 // Good
 StorageHDG.DeleteMany(media.map((m) => `${mediaPath(user.id, params.id)}/${m.fileName}`)).catch(console.error);
 
-// Bad — do not wrap arguments across lines
+DatabaseService([
+  ...queryDeleteDB,
+  'FLUSH PRIVILEGES;'
+]);
+
+await DBCore.insert(UserModel).values({
+  username: body.username,
+  password: body.password
+});
+
+// Bad — do not wrap variable/function-call arguments across lines
 StorageHDG.DeleteMany(
   media.map((m) => `${mediaPath(user.id, params.id)}/${m.fileName}`)
 ).catch(console.error);
