@@ -271,14 +271,28 @@ await Promise.all([
 ]);
 ```
 
-## Drizzle conditions: Always break `and(` items onto separate lines
+## Drizzle conditions: Keep `and(` inline with `.where(`, break only condition items
 
-When using `and(` in Drizzle conditions, always put each condition item on its own line.
+When using `and(` in Drizzle conditions, keep `and(` inline with `.where(`, then put each condition item on its own line.
 
 This is a back-end exception to the general `CODE-STYLE.md` rule about not breaking function-call arguments across multiple lines.
 
 ```ts
 // Good
+await DBCore.select()
+  .from(UserEmailModel)
+  .where(and(
+    eq(UserEmailModel.id, params.id),
+    eq(UserEmailModel.userId, user.id),
+    isNull(UserEmailModel.deletedAt)
+  ));
+
+// Bad
+await DBCore.select()
+  .from(UserEmailModel)
+  .where(and(eq(UserEmailModel.id, params.id), eq(UserEmailModel.userId, user.id), isNull(UserEmailModel.deletedAt)));
+
+// Bad
 await DBCore.select()
   .from(UserEmailModel)
   .where(
@@ -288,11 +302,6 @@ await DBCore.select()
       isNull(UserEmailModel.deletedAt)
     )
   );
-
-// Bad
-await DBCore.select()
-  .from(UserEmailModel)
-  .where(and(eq(UserEmailModel.id, params.id), eq(UserEmailModel.userId, user.id), isNull(UserEmailModel.deletedAt)));
 ```
 
 ## Route composition: Request → Security → Controller order
