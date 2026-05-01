@@ -78,6 +78,76 @@ import type {
 } from '@request/mobile/owner/contract';
 ```
 
+## Always use semicolons for imports and exports
+
+Every `import` statement and every `export` statement must end with `;`.
+
+```ts
+// Good
+import axios from 'axios';
+import { useAuthStore } from '@store';
+export { usePageTitle } from './use-document-title';
+export default api;
+
+// Bad
+import axios from 'axios'
+import { useAuthStore } from '@store'
+export { usePageTitle } from './use-document-title'
+export default api
+```
+
+## Always end TypeScript and JavaScript statements with semicolons
+
+Every TypeScript/JavaScript statement must end with `;`: variable declarations, assignments, return statements, function calls, chained calls, hook calls, and component exports.
+
+```ts
+// Good
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API,
+  withCredentials: true
+});
+
+useAuthStore.getState()
+  .logout();
+
+return response.data;
+
+// Bad
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API,
+  withCredentials: true
+})
+
+useAuthStore.getState()
+  .logout()
+
+return response.data
+```
+
+## Never use `any`
+
+Do not use `any` in function params, return types, variables, generics, or assertions. Use a concrete interface/type, `unknown`, or library-provided types instead.
+
+```ts
+// Good
+const handleResponse = (response: AxiosResponse<APIResponse<unknown>>) => {
+  return response.data
+}
+
+const handleError = (error: AxiosError<APIResponse<unknown>>) => {
+  return Promise.reject(error)
+}
+
+// Bad
+const handleResponse = (response: any) => {
+  return response.data
+}
+
+const handleError = (error: any) => {
+  return Promise.reject(error)
+}
+```
+
 ## Always use single quotes
 
 ```ts

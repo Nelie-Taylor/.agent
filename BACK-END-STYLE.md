@@ -95,6 +95,41 @@ const Profile = async (c) => {
 };
 ```
 
+## Function-local interfaces: Place directly above the related function
+
+When an interface belongs to one controller or middleware function, place it directly above that function. Do not group those interfaces at the top of the file.
+
+```ts
+// Good
+interface IDeleteParams {
+  id: number;
+}
+
+const Delete = async (c: Context, next: Next) => {
+  const params: IDeleteParams = c.get('params');
+  await next();
+};
+
+// Bad
+interface IDeleteParams {
+  id: number;
+}
+
+interface ICreateBody {
+  name: string;
+}
+
+const Create = async (c: Context, next: Next) => {
+  const body: ICreateBody = c.get('body');
+  await next();
+};
+
+const Delete = async (c: Context, next: Next) => {
+  const params: IDeleteParams = c.get('params');
+  await next();
+};
+```
+
 ## Response envelope: Always use `{ code, mess, data }` shape
 
 All JSON responses must use the standard envelope. Never return raw data or non-standard shapes from `/website` or `/link` routes.
@@ -136,11 +171,15 @@ return c.json({
 });
 ```
 
-## Request validation: Joi schema with early return pattern
+## Request validation: Joi inline validation with early return pattern
 
-Request validation middleware must define a Joi schema, parse the body with `.catch(() => ({}))`, validate, return early on error with `code: -1`, then set the validated value on context.
+Request validation middleware must validate inline with Joi, parse the body with `.catch(() => ({}))`, return early on error with `code: -1`, then set the validated value on context.
 
 Export the TypeScript interface from the same request file so controllers can import it.
+
+Interfaces used by only one request middleware must be placed directly above that middleware, not grouped at the top of the file.
+
+Apply the chain rule from `CODE-STYLE.md`: when Joi validation has two dots, keep `.object<...>(...)` on the base expression and put `.validate(...)` on the next line.
 
 ```ts
 // Good
@@ -149,12 +188,11 @@ export interface ICreateBody {
 }
 
 const Create = async (c: Context, next: Next) => {
-  const schema = Joi.object<ICreateBody>({
-    email: Joi.string().email().required()
-  });
-
   const raw = await c.req.json().catch(() => ({}));
-  const validateBody = schema.validate(raw);
+  const validateBody: Joi.ValidationResult<ICreateBody> = Joi.object<ICreateBody>({
+    email: Joi.string().email().required()
+  })
+    .validate(raw);
   if (validateBody.error) {
     return c.json({
       code: -1,
@@ -171,7 +209,12 @@ const Create: MiddlewareHandler = async (c, next) => {
   // ...
 };
 
-// Bad — no early return, no interface export, no .catch on json parse
+// Bad - interface is not directly above the function that uses it
+export interface IUpdateBody {
+  email: string;
+}
+
+// Bad - no early return, no interface export, no .catch on json parse
 const Create = async (c: Context, next: Next) => {
   const body = await c.req.json();
   c.set('body', body);
