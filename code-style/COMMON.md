@@ -270,9 +270,11 @@ StorageHDG.DeleteMany(
 
 ## Only break chained calls from the second dot onward
 
-The first `.method()` stays on the same line as the base expression. The second `.` and every subsequent `.` must start on a new line, indented once from the base.
+The first `.method()` stays on the same line as the base expression. The second `.` and every subsequent `.` must each start on a new line, indented once from the base.
 
 A chain with only one `.` needs no break. A chain with two or more `.` calls keeps the first on the same line and wraps the rest.
+
+**Special case — when the base expression itself (not a chained method) has a multiline argument:** the closing `})` ends the base expression, and the first chained `.method()` goes on that same `})` line. The second chained `.method()` still wraps to a new line.
 
 ```ts
 // Good — 1 dot, no break needed
@@ -285,7 +287,8 @@ uuid('id').primaryKey()
 varchar('username').notNull()
   .unique(),
 
-// Good — 2 dots after multiline arg: first dot on closing line, second wraps
+// Good — base expression has multiline arg: first dot on closing line, second wraps
+// Here `timestamp(...)` is the base; `.notNull()` is first dot; `.defaultNow()` is second
 timestamp('created_at', {
   withTimezone: true
 }).notNull()
@@ -295,10 +298,22 @@ timestamp('created_at', {
 jsonb('to').$type<string[]>().notNull()
   .default([]),
 
-// Good — query chain
+// Good — query chain where first dot is .select() on the base `DBCore`
+// .from() is second dot → new line; .where() is third dot → new line
 await DBCore.select()
   .from(Account.AccountOAuth)
   .where(eq(Account.AccountOAuth.userId, userId));
+
+// Good — query chain where .select() has a multiline argument
+// .select() is still the first dot (stays on DBCore line); its multiline arg closes })
+// .from() is the second dot → new line after })
+await DBCore.select({
+    id: UserModel.id,
+    username: UserModel.username
+  })
+  .from(UserModel)
+  .where(eq(UserModel.id, params.id))
+  .limit(1);
 
 // Bad — do not break before the first chained call
 await DBCore
@@ -308,6 +323,13 @@ await DBCore
 
 // Bad — second dot not wrapped
 uuid('id').primaryKey().defaultRandom(),
+
+// Bad — do not put the second dot on the }) closing line
+// (.from() is the second dot, not the first)
+await DBCore.select({
+    id: UserModel.id
+  }).from(UserModel)  // wrong: .from() is 2nd dot, must be on its own new line
+  .where(eq(UserModel.id, params.id));
 ```
 
 ## Never extract object properties into intermediate variables
