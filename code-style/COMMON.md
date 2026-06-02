@@ -1,10 +1,10 @@
 # Code Style
 
-## Objects: Always put properties on separate lines
+## Objects and interfaces: Always put members on separate lines
 
 Applies to TypeScript/JavaScript and Dart/Flutter source.
 
-This applies everywhere: top-level declarations, inline payloads, object/map literals inside functions, callbacks, widget trees, helper returns, and nested object literals passed as arguments.
+This applies everywhere: top-level declarations, inline payloads, object/map literals inside functions, callbacks, widget trees, helper returns, nested object literals passed as arguments, and TypeScript `interface` / `type` declarations.
 
 ```ts
 // Good
@@ -18,10 +18,24 @@ timestamp('created_at', {
   withTimezone: true
 })
 
-// Bad — do not inline properties
+interface IUser {
+  id: string;
+  username: string;
+}
+
+type IPoint = {
+  x: number;
+  y: number;
+};
+
+// Bad — do not inline properties or interface members
 const obj = { key1: 'value1', key2: 'value2', key3: 'value3' }
 
 timestamp('created_at', { withTimezone: true })
+
+interface IUser { id: string; username: string; }
+
+type IPoint = { x: number; y: number; };
 ```
 
 ```dart
